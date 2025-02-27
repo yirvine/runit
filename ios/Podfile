@@ -6,13 +6,12 @@ require Pod::Executable.execute_command('node', ['-p',
   )', __dir__]).strip
 
 platform :ios, min_ios_version_supported
-prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# ✅ Enable both modular headers & frameworks
+use_frameworks! :linkage => :static
+use_modular_headers!
+
+prepare_react_native_project!
 
 target 'runit_fe' do
   config = use_native_modules!
@@ -23,8 +22,11 @@ target 'runit_fe' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # ✅ Ensure ReactCommon is linked properly
+  pod 'ReactCommon', :path => '../node_modules/react-native/ReactCommon'
+
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    # ✅ This post_install hook is needed for React Native
     react_native_post_install(
       installer,
       config[:reactNativePath],
