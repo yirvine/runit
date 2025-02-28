@@ -5,8 +5,8 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
+// import type {PropsWithChildren} from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -15,24 +15,22 @@ import {
   TouchableOpacity,
   useColorScheme,
   View,
-  Button,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 
 import {
   Colors,
-  DebugInstructions,
   Header,
-  LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '@env';
 import { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_APP_ID } from '@env';
 
-import { getAuth, signInWithCredential, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signInWithCredential, GoogleAuthProvider, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
+
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const sendTokenToBackend = async (firebaseIdToken: string) => {
   console.log('📤 Sending Firebase ID Token to backend:', firebaseIdToken);
@@ -72,42 +70,32 @@ GoogleSignin.configure({
   iosClientId: GOOGLE_IOS_CLIENT_ID,
 });
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
 function App(): React.JSX.Element {
+
   const isDarkMode = useColorScheme() === 'dark';
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const auth = getAuth(app);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        console.log('✅ User is logged in:', firebaseUser.email);
+        setUser(firebaseUser);
+      } else {
+        console.log('❌ No user logged in');
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [auth]); // Add `auth` to dependencies
 
   const signInWithGoogle = async () => {
     console.log('🔥 Sign-In Button Clicked'); // Debug log
@@ -123,68 +111,60 @@ function App(): React.JSX.Element {
       }
 
       // ✅ Exchange Google Token for Firebase Token
-      const auth = getAuth();
       const googleCredential = GoogleAuthProvider.credential(idToken);
       const firebaseUser = await signInWithCredential(auth, googleCredential);
-
-      // ✅ Extract Firebase ID Token (this is what we send to NestJS)
-      const firebaseIdToken = await firebaseUser.user.getIdToken();
+      const firebaseIdToken = await firebaseUser.user.getIdToken();  // This is what we send to NestJS
 
       console.log('🔥 Firebase ID Token:', firebaseIdToken);
 
-      // ✅ Now send it to the backend!
-      sendTokenToBackend(firebaseIdToken);
+      sendTokenToBackend(firebaseIdToken);  // Send it to the backend!
 
     } catch (error) {
       console.error('Google Sign-In Error:', error);
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      await GoogleSignin.signOut();
+      console.log('✅ User signed out');
+    } catch (error) {
+      console.error('❌ Sign Out Error:', error);
+    }
+  };
 
-  const safePadding = '5%';
+  // const safePadding = '5%';
 
   return (
     <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <ScrollView>
+        <View>
+          <Header />
         </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            SCWEEEEN and then come back to see your edits.
-          </Section>
 
-          <Section title="Sign In">
-          <Button title="Test Button" onPress={() => console.log('🔥 Button Pressed')} />
-            {/* Add Button to Trigger Google Sign-In */}
-            <TouchableOpacity onPress={signInWithGoogle} style={styles.signInButton}>
-              <Text style={styles.signInText}>Sign in with Google</Text>
-            </TouchableOpacity>
-          </Section>
-
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+        <View style={styles.sectionContainer}>
+          {loading ? ( // Show loading indicator while Firebase is checking auth state
+            <ActivityIndicator size="large" color="#4285F4" />
+          ) : user ? (
+            <>
+              <Text style={styles.sectionTitle}>Welcome, {user?.displayName || 'User'}!</Text>
+              <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
+                <Text style={styles.signInText}>Sign Out</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Text style={styles.sectionTitle}>Sign In</Text>
+              <TouchableOpacity onPress={signInWithGoogle} style={styles.signInButton}>
+                <Text style={styles.signInText}>Sign in with Google</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ScrollView>
+
     </View>
   );
 }
@@ -216,6 +196,14 @@ const styles = StyleSheet.create({
   signInText: {
     color: 'white',
     fontSize: 18,
+  },
+
+  signOutButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
 
