@@ -16,6 +16,7 @@ import {
   useColorScheme,
   View,
   Button,
+  ActivityIndicator
 } from 'react-native';
 
 import {
@@ -29,8 +30,8 @@ import {
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '@env';
 import { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_APP_ID } from '@env';
-// import auth, { getAuth, signInWithCredential } from '@react-native-firebase/auth';
-import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+
+import { getAuth, signInWithCredential, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 
 const sendTokenToBackend = async (firebaseIdToken: string) => {
@@ -62,12 +63,9 @@ const firebaseConfig = {
 };
 
 // ✅ Check if Firebase is already initialized
-if (!getApps().length) {
-  initializeApp(firebaseConfig);
-  console.log('🔥 Firebase Initialized');
-} else {
-  console.log('✅ Firebase Already Initialized');
-}
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+console.log('🔥 Firebase Initialized:', app.name);
+
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
