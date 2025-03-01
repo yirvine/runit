@@ -22,6 +22,12 @@ DerivedData
 *.xcuserstate
 **/.xcode.env.local
 
+### iOS
+ios/GoogleService-Info.plist
+
+### React Native env
+react-native-dotenv.d.ts
+
 # Android/IntelliJ
 #
 build/
