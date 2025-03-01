@@ -6,31 +6,25 @@
  */
 
 import React, { useEffect, useState } from 'react';
-// import type {PropsWithChildren} from 'react';
 import {
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
   ActivityIndicator,
 } from 'react-native';
 
 import {
-  Colors,
   Header,
 } from 'react-native/Libraries/NewAppScreen';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '@env';
-import { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_APP_ID } from '@env';
 
-import { getAuth, signInWithCredential, GoogleAuthProvider, onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { initializeApp, getApps } from 'firebase/app';
-
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { signInWithCredential, GoogleAuthProvider, signOut, User, onAuthStateChanged } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from './firebase';
 
 const sendTokenToBackend = async (firebaseIdToken: string) => {
   console.log('📤 Sending Firebase ID Token to backend:', firebaseIdToken);
@@ -51,19 +45,6 @@ const sendTokenToBackend = async (firebaseIdToken: string) => {
 };
 
 console.log('🔥 App Loaded Successfully');
-const firebaseConfig = {
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
-  projectId: FIREBASE_PROJECT_ID,
-  storageBucket: FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
-  appId: FIREBASE_APP_ID,
-};
-
-// ✅ Check if Firebase is already initialized
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-console.log('🔥 Firebase Initialized:', app.name);
-
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
@@ -72,52 +53,53 @@ GoogleSignin.configure({
 
 function App(): React.JSX.Element {
 
-  const isDarkMode = useColorScheme() === 'dark';
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const auth = getAuth(app);
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        console.log('✅ User is logged in:', firebaseUser.email);
+        console.log('✅ User session restored:', firebaseUser.email);
         setUser(firebaseUser);
       } else {
-        console.log('❌ No user logged in');
+        console.log('❌ No session found');
         setUser(null);
       }
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [auth]); // Add `auth` to dependencies
+  }, []);
 
   const signInWithGoogle = async () => {
-    console.log('🔥 Sign-In Button Clicked'); // Debug log
+    console.log('🔥 Sign-In Button Clicked');
 
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();  // ✅ Gets Google User Info
-      const idToken = userInfo.data?.idToken; // Ensure we access it properly
+      const userInfo = await GoogleSignin.signIn();
+      // Access the idToken from the userInfo object
+      // @ts-ignore - Ignoring type checking for this line as the GoogleSignin types might be incorrect
+      const idToken = userInfo.data?.idToken;
 
       if (!idToken) {
         console.error('❌ No Google ID Token returned');
         return;
       }
 
-      // ✅ Exchange Google Token for Firebase Token
       const googleCredential = GoogleAuthProvider.credential(idToken);
       const firebaseUser = await signInWithCredential(auth, googleCredential);
-      const firebaseIdToken = await firebaseUser.user.getIdToken();  // This is what we send to NestJS
+      const firebaseIdToken = await firebaseUser.user.getIdToken();
 
       console.log('🔥 Firebase ID Token:', firebaseIdToken);
 
-      sendTokenToBackend(firebaseIdToken);  // Send it to the backend!
+      // ✅ Store Firebase token to persist session
+      await ReactNativeAsyncStorage.setItem('firebaseIdToken', firebaseIdToken);
+
+      // ✅ 🔥 Send token to backend (Re-added)
+      sendTokenToBackend(firebaseIdToken);
+
+      console.log('✅ Sign-in successful, session will persist.');
+      setUser(firebaseUser.user);
 
     } catch (error) {
       console.error('Google Sign-In Error:', error);
@@ -128,17 +110,15 @@ function App(): React.JSX.Element {
     try {
       await signOut(auth);
       await GoogleSignin.signOut();
+      await ReactNativeAsyncStorage.removeItem('firebaseIdToken');
       console.log('✅ User signed out');
     } catch (error) {
       console.error('❌ Sign Out Error:', error);
     }
   };
 
-  // const safePadding = '5%';
-
   return (
-    <View style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+    <View>
       <ScrollView>
         <View>
           <Header />
@@ -164,7 +144,6 @@ function App(): React.JSX.Element {
           )}
         </View>
       </ScrollView>
-
     </View>
   );
 }
