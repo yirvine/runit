@@ -14,10 +14,14 @@
     "@react-native-firebase/app": "^21.11.0",
     "@react-native-firebase/auth": "^21.11.0",
     "@react-native-google-signin/google-signin": "^13.2.0",
+    "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/native": "^7.0.14",
     "firebase": "^11.4.0",
     "react": "19.0.0",
     "react-native": "0.78.0",
-    "react-native-dotenv": "^3.4.11"
+    "react-native-dotenv": "^3.4.11",
+    "react-native-safe-area-context": "^5.2.0",
+    "react-native-screens": "^4.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
