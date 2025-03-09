@@ -40,7 +40,7 @@ const RecordScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d5f1d7',
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   recordButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: '#6bc76b',
     width: 150,
     height: 150,
     borderRadius: 75,

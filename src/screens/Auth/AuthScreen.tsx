@@ -38,22 +38,22 @@ const AuthScreen = () => {
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      
+
       // Make sure Google Play Services are available (for Android)
       await GoogleSignin.hasPlayServices();
-      
+
       // Sign in with Google
       const userInfo = await GoogleSignin.signIn();
-      
+
       // Cast to our extended type
       const extendedUserInfo = userInfo as unknown as ExtendedSignInResponse;
-      
+
       // Log the response for debugging
       console.log('Google Sign-In response structure:', Object.keys(extendedUserInfo));
-      
+
       // Get the ID token from the nested data structure
       const idToken = extendedUserInfo.data?.idToken;
-      
+
       if (!idToken) {
         console.error('❌ No Google ID Token returned in the response');
         console.log('Full response:', JSON.stringify(extendedUserInfo));
@@ -64,27 +64,27 @@ const AuthScreen = () => {
         );
         return;
       }
-      
+
       console.log('✅ Successfully got ID token from Google');
-      
+
       // Create a Google credential with the token
       const googleCredential = GoogleAuthProvider.credential(idToken);
-      
+
       // Sign in to Firebase with the Google credential
       const firebaseUserCredential = await signInWithCredential(auth, googleCredential);
-      
+
       // Get the Firebase ID token
       const firebaseIdToken = await firebaseUserCredential.user.getIdToken();
-      
+
       // Store the token for session persistence
       await AsyncStorage.setItem('firebaseIdToken', firebaseIdToken);
-      
+
       console.log('✅ Sign-in successful, session will persist.');
       setLoading(false);
     } catch (error) {
       console.error('Google Sign-In Error:', error);
       setLoading(false);
-      
+
       // Show a user-friendly error message
       Alert.alert(
         'Sign-In Failed',
@@ -127,7 +127,7 @@ const AuthScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d5f1d7',
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#4285F4',
+    color: '#6bc76b',
     marginBottom: 10,
   },
   tagline: {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   signInButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: '#6bc76b',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,

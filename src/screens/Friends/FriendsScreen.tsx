@@ -59,7 +59,7 @@ const FriendsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d5f1d7',
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#4285F4',
+    backgroundColor: '#6bc76b',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,

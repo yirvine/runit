@@ -1,0 +1,55 @@
+/* Update the background to white */
+body {
+  background-color: white;
+  color: #333;
+}
+
+/* Add subtle card styling for challenges */
+.challenge-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  padding: 16px;
+  border-left: 4px solid #8cd98c; /* Keep green accent on the left side */
+}
+
+/* Style for completed challenges */
+.challenge-card.completed {
+  background-color: #f0f8f0; /* Very light green background */
+  border-left: 4px solid #6bc76b; /* Darker green accent */
+}
+
+/* Header styling */
+.challenges-header {
+  color: #2e7d32; /* Darker green for headers */
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* Fix navigation bar positioning */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 12px 0;
+  z-index: 100;
+}
+
+/* Add styles for buttons */
+.button {
+  background-color: #6bc76b;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+/* Add styles for active elements */
+.active {
+  color: #6bc76b;
+} 

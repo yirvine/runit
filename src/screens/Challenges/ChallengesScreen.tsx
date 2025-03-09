@@ -103,17 +103,18 @@ const ChallengesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d5f1d7',
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
     padding: 20,
+    paddingBottom: 90,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#2e7d32',
   },
   subtitle: {
     fontSize: 18,
@@ -126,14 +127,20 @@ const styles = StyleSheet.create({
   },
   challengesListContent: {
     paddingVertical: 10,
+    paddingBottom: 30,
   },
   challengeItem: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#eaeaea',
+    borderLeftWidth: 4,
+    borderLeftColor: '#8cd98c',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   challengeHeader: {
     flexDirection: 'row',
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   activeStatus: {
-    backgroundColor: '#e6f2ff',
+    backgroundColor: '#e6ffe6',
   },
   completedStatus: {
     backgroundColor: '#e6ffe6',
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
   challengeStatusText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#4285F4',
+    color: '#6bc76b',
   },
   challengeDescription: {
     fontSize: 14,
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   joinButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: '#6bc76b',
     paddingHorizontal: 15,
     paddingVertical: 6,
     borderRadius: 15,

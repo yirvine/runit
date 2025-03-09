@@ -11,10 +11,10 @@ const ProfileScreen = () => {
     try {
       // Remove stored token
       await AsyncStorage.removeItem('firebaseIdToken');
-      
+
       // Sign out from Firebase
       await signOut(auth);
-      
+
       console.log('✅ Successfully signed out');
     } catch (error) {
       console.error('Sign out error:', error);
@@ -58,7 +58,7 @@ const ProfileScreen = () => {
         <Text style={styles.description}>
           Your profile will show your running stats, achievements, and personal records.
         </Text>
-        
+
         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
@@ -70,7 +70,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d5f1d7',
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   profileInitial: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#4285F4',
+    color: '#6bc76b',
   },
   name: {
     fontSize: 24,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#4285F4',
+    color: '#6bc76b',
   },
   statLabel: {
     fontSize: 14,
