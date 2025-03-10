@@ -129,7 +129,7 @@ const RecordScreen = () => {
     };
   }, []);
 
-  // Add a separate timer function that uses actual elapsed time
+  // Add separate timer function that uses actual elapsed time
   useEffect(() => {
     let timerInterval: NodeJS.Timeout | null = null;
 
