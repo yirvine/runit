@@ -13,26 +13,13 @@ RunIt provides a comprehensive running experience with the following features:
 
 ## Screenshots
 
-### Home Screen
-![Home Screen](./assets/screenshots/home.png)
+| Profile Page | Friends | Challenges |
+|-------------|---------|-----------|
+| <img src="./assets/screenshots/profilepage.png" width="250"> | <img src="./assets/screenshots/friends.png" width="250"> | <img src="./assets/screenshots/challenges1.png" width="250"> |
 
-### Recording a Run
-![Recording Run](./assets/screenshots/recordingrun.png)
-
-### Completed Run
-![Recorded Run](./assets/screenshots/recordedrun.png)
-
-### Record Page
-![Record Page](./assets/screenshots/recordpage.png)
-
-### Challenges
-![Challenges](./assets/screenshots/challenges1.png)
-
-### Friends
-![Friends](./assets/screenshots/friends.png)
-
-### Profile
-![Profile](./assets/screenshots/profilepage.png)
+| Record Page | Recording a Run | Completed Run |
+|------------|----------------|---------------|
+| <img src="./assets/screenshots/recordpage.png" width="250"> | <img src="./assets/screenshots/recordingrun.png" width="250"> | <img src="./assets/screenshots/recordedrun.png" width="250"> |
 
 ---
 
