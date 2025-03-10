@@ -2,6 +2,11 @@
 
 RunIt is a mobile fitness application built with React Native that helps users track their runs, compete with friends, and participate in challenges.
 
+## Repository Structure
+
+This repository contains the frontend code for RunIt. The application connects to a backend service which can be found at:
+- Backend Repository: [https://github.com/yirvine/runit-frontend](https://github.com/yirvine/runit-frontend)
+
 ## App Overview
 
 RunIt provides a comprehensive running experience with the following features:
