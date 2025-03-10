@@ -10,11 +10,11 @@ interface Friend {
 
 // Dummy data for friends list
 const dummyFriends: Friend[] = [
-  { id: '1', name: 'Sarah Johnson', runs: 12, miles: 45.2 },
-  { id: '2', name: 'Mike Chen', runs: 8, miles: 32.7 },
-  { id: '3', name: 'Jessica Williams', runs: 15, miles: 62.3 },
-  { id: '4', name: 'David Kim', runs: 5, miles: 18.5 },
-  { id: '5', name: 'Emma Davis', runs: 10, miles: 40.1 },
+  { id: '1', name: 'Clint Snow', runs: 12, miles: 45.2 },
+  { id: '2', name: 'Cori Arsenault', runs: 8, miles: 32.7 },
+  { id: '3', name: 'Nick Nitro', runs: 5, miles: 62.3 },
+  { id: '4', name: 'Grover Schurman', runs: 5, miles: 18.5 },
+  { id: '5', name: 'Zack Conrad', runs: 11, miles: 6.1 },
 ];
 
 const FriendsScreen = () => {
