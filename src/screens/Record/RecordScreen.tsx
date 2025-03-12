@@ -212,46 +212,47 @@ const RecordScreen = () => {
         setRouteCoordinates([location]);
       }
 
-      // For simulator testing
+      // For simulator testing - use a more aggressive polling approach
       if (__DEV__ && Platform.OS === 'ios') {
-        // Use a more controlled simulation for the simulator
+        // Poll for location changes more frequently
         watchId.current = setInterval(() => {
-          if (!location) {return;}
+          // Get current location on each interval
+          Geolocation.getCurrentPosition(
+            (position) => {
+              const newCoordinate = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              };
 
-          // Create a new coordinate with a small random offset (less frequent)
-          const newCoordinate = {
-            latitude: location.latitude + (Math.random() - 0.5) * 0.0002,
-            longitude: location.longitude + (Math.random() - 0.5) * 0.0002,
-          };
+              // Only add to route if position actually changed
+              if (!location ||
+                  newCoordinate.latitude !== location.latitude ||
+                  newCoordinate.longitude !== location.longitude) {
 
-          setLocation(newCoordinate);
+                setLocation(newCoordinate);
 
-          setRouteCoordinates(prevCoordinates => {
-            if (!Array.isArray(prevCoordinates) || prevCoordinates.length === 0) {
-              return [newCoordinate];
-            }
+                setRouteCoordinates(prevCoordinates => {
+                  if (!Array.isArray(prevCoordinates) || prevCoordinates.length === 0) {
+                    return [newCoordinate];
+                  }
 
-            const updatedCoordinates = [...prevCoordinates, newCoordinate];
+                  const updatedCoordinates = [...prevCoordinates, newCoordinate];
 
-            // Calculate new distance
-            const lastCoord = prevCoordinates[prevCoordinates.length - 1];
-            if (lastCoord) {
-              const newDistance = haversine(lastCoord, newCoordinate, { unit: 'mile' });
-              setDistance(prevDistance => prevDistance + newDistance);
-            }
+                  // Calculate new distance
+                  const lastCoord = prevCoordinates[prevCoordinates.length - 1];
+                  if (lastCoord) {
+                    const newDistance = haversine(lastCoord, newCoordinate, { unit: 'mile' });
+                    setDistance(prevDistance => prevDistance + newDistance);
+                  }
 
-            return updatedCoordinates;
-          });
-
-          // Center map on new location
-          if (mapRef.current) {
-            mapRef.current.animateToRegion({
-              ...newCoordinate,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            });
-          }
-        }, 3000); // Less frequent updates (every 3 seconds)
+                  return updatedCoordinates;
+                });
+              }
+            },
+            (error) => console.log(error),
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+          );
+        }, 500); // Poll every 500ms
       } else {
         // Watch position changes
         watchId.current = Geolocation.watchPosition(
@@ -271,25 +272,14 @@ const RecordScreen = () => {
                 longitude: position.coords.longitude,
               };
 
-              // For simulator testing - add small random movement if not moving
-              if (location &&
-                  newCoordinate.latitude === location.latitude &&
-                  newCoordinate.longitude === location.longitude) {
-                // Add tiny random movement for testing in simulator
-                newCoordinate.latitude += (Math.random() - 0.5) * 0.0001;
-                newCoordinate.longitude += (Math.random() - 0.5) * 0.0001;
-              }
+              // Update location state with the new coordinates
+              setLocation(newCoordinate);
 
-              setLocation(prevLocation => {
-                // Only update if we have a valid previous location
-                if (!prevLocation) {return newCoordinate;}
-                return newCoordinate;
-              });
-
+              // IMPORTANT: Always add the new coordinate to route coordinates
+              // This ensures the path follows the blue dot
               setRouteCoordinates(prevCoordinates => {
                 // Safety check
                 if (!Array.isArray(prevCoordinates)) {
-                  console.log('prevCoordinates is not an array:', prevCoordinates);
                   return [newCoordinate];
                 }
 
@@ -304,21 +294,7 @@ const RecordScreen = () => {
                         typeof lastCoord.latitude === 'number' &&
                         typeof lastCoord.longitude === 'number') {
                       const newDistance = haversine(lastCoord, newCoordinate, { unit: 'mile' });
-
-                      // Update distance state
-                      setDistance(prevDistance => {
-                        const updatedDistance = prevDistance + newDistance;
-
-                        // Update pace if duration exists
-                        if (duration > 0 && updatedDistance > 0) {
-                          const paceMinutes = duration / 60 / updatedDistance;
-                          const paceMinutesWhole = Math.floor(paceMinutes);
-                          const paceSeconds = Math.floor((paceMinutes - paceMinutesWhole) * 60);
-                          setPace(`${paceMinutesWhole}'${paceSeconds.toString().padStart(2, '0')}"/mi`);
-                        }
-
-                        return updatedDistance;
-                      });
+                      setDistance(prevDistance => prevDistance + newDistance);
                     }
                   } catch (error) {
                     console.log('Error calculating distance:', error);
