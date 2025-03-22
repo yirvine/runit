@@ -6,7 +6,7 @@ RunIt is a mobile fitness application built with React Native that helps users t
 
 This repository contains the frontend code for RunIt. The application connects to a backend service which can be found at:
 - Backend Repository: [https://github.com/yirvine/runit-frontend](https://github.com/yirvine/runit-frontend)
-
+   
 ## App Overview
 
 RunIt provides a comprehensive running experience with the following features in development:
@@ -27,6 +27,73 @@ RunIt provides a comprehensive running experience with the following features in
 | <img src="./assets/screenshots/recordpage.png" width="250"> | <img src="./assets/screenshots/recordingrun.png" width="250"> | <img src="./assets/screenshots/recordedrun.png" width="250"> |
 
 ---
+## Tech Stack
+
+### Frontend
+- **React Native** - Cross-platform mobile application framework
+- **Firebase Auth** - Handles user authentication with Google Sign-In
+- **React Navigation** - Navigation library for screen management
+
+### Backend
+- **NestJS** - Progressive Node.js framework for building efficient and scalable server-side applications
+- **PostgreSQL** - Primary database for storing user data and application state
+- **TypeORM** - ORM for TypeScript and JavaScript, used for database interactions
+- **Docker** - Containerization for consistent development and deployment environments
+- **Firebase Admin SDK** - Server-side Firebase authentication verification
+  
+## Authentication Flow
+
+The application implements a robust authentication system using Firebase and custom backend validation:
+
+1. **User Authentication**
+   - Users sign in using Google Authentication via Firebase
+   - Firebase provides an ID token upon successful authentication
+   - Session persistence is maintained for seamless user experience
+
+2. **Backend Verification**
+   - Frontend sends Firebase ID token to backend (`/auth/login`)
+   - Backend verifies token using Firebase Admin SDK
+   - User data is stored/updated in PostgreSQL database
+   - Custom JWT tokens are issued for ongoing session management
+
+3. **Session Management**
+   - Firebase handles client-side session persistence
+   - Backend maintains user state in PostgreSQL
+   - Automatic token refresh and validation
+---
+## Security Considerations
+
+- Firebase ID tokens are verified server-side
+- PostgreSQL data is secured behind authentication
+- Environment variables are used for sensitive credentials
+- JWT tokens are used for ongoing session validation
+- Production deployments should set `synchronize: false` in TypeORM config
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### POST /auth/login
+Authenticates user with Firebase ID token
+```typescript
+Request:
+{
+  idToken: string  // Firebase ID token
+}
+
+Response:
+{
+  user: {
+    id: number,
+    email: string,
+    name: string,
+    // ...other user fields
+  },
+  accessToken: string,
+  refreshToken: string
+}
+```
+
 
 # Getting Started
 
