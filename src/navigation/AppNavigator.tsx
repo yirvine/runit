@@ -19,9 +19,9 @@ const AppNavigator = () => {
     try {
       // Get the Firebase ID token
       const firebaseIdToken = await firebaseUser.getIdToken();
-      
+
       console.log('Sending request to:', `${API_URL}/auth/login`);
-      
+
       // Call your backend API to register/verify the user
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
@@ -32,7 +32,7 @@ const AppNavigator = () => {
           idToken: firebaseIdToken,
         }),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Failed to register user with backend:', errorText);

@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.2.3",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native-firebase/app": "^21.11.0",
@@ -21,11 +22,13 @@
     "haversine": "^1.1.1",
     "react": "19.0.0",
     "react-native": "0.78.0",
+    "react-native-chart-kit": "^6.12.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-maps": "^1.20.1",
     "react-native-safe-area-context": "^5.2.0",
-    "react-native-screens": "^4.9.1"
+    "react-native-screens": "^4.9.1",
+    "react-native-svg": "^15.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
