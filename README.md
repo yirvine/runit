@@ -9,12 +9,12 @@ This repository contains the frontend code for RunIt. The application connects t
 
 ## App Overview
 
-RunIt provides a comprehensive running experience with the following features:
+RunIt provides a comprehensive running experience with the following features in development:
 
 - **Track Your Runs**: Record your running routes, distance, time, and pace in real-time
 - **Connect with Friends**: Add friends and see their running activity
 - **Challenges**: Participate in running challenges to stay motivated
-- **Personal Profile**: View your running statistics and achievements
+- **Personal Profile**: View your running statistics and achievements, fully authenticated by Google via Firebase
 
 ## Screenshots
 
