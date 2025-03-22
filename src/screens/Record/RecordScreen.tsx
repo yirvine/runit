@@ -93,7 +93,7 @@ const RecordScreen = () => {
           longitude: position.coords.longitude,
         };
         setLocation(initialCoordinate);
-        
+
         // Just set location but DON'T add to route coordinates here
         // Only center the map, don't track yet
         if (mapRef.current) {
@@ -396,7 +396,7 @@ const RecordScreen = () => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hrs > 0) {
       return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
@@ -471,16 +471,16 @@ const RecordScreen = () => {
         {/* Stats Container */}
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Distance</Text>
-            <Text style={styles.statValue}>{distance.toFixed(2)} km</Text>
+            <Text style={styles.statValue}>{distance.toFixed(2)}</Text>
+            <Text style={styles.statLabel}>Kilometers</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Duration</Text>
             <Text style={styles.statValue}>{formatTime(duration)}</Text>
+            <Text style={styles.statLabel}>Time</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Pace</Text>
-            <Text style={styles.statValue}>{pace}</Text>
+            <Text style={styles.statValue}>{pace.replace("'", ':').replace('"', '')}</Text>
+            <Text style={styles.statLabel}>Avg. Pace</Text>
           </View>
         </View>
 
@@ -502,14 +502,14 @@ const RecordScreen = () => {
           {/* Add header with close button */}
           <View style={styles.modalHeader}>
             <Text style={styles.title}>Workout Summary</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={handleCloseSummary}
             >
               <Text style={styles.closeButtonText}>×</Text>
             </TouchableOpacity>
           </View>
-          
+
           <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.header}>
               <Text style={styles.date}>{formatDate(workoutData.date)}</Text>
@@ -551,35 +551,22 @@ const RecordScreen = () => {
             </View>
 
             {/* Additional Stats */}
-            <View style={styles.additionalStats}>
-              <View style={styles.statRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statLabel}>Calories</Text>
-                  <Text style={styles.statValue}>
-                    {calculateCalories(workoutData.distance)} kcal
-                  </Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={styles.statLabel}>Avg. Speed</Text>
-                  <Text style={styles.statValue}>
-                    {calculateAvgSpeed(workoutData.distance, workoutData.duration)} km/h
-                  </Text>
-                </View>
+            <View style={styles.additionalStatsContainer}>
+              <View style={styles.mainStat}>
+                <Text style={styles.mainStatValue}>
+                  {calculateCalories(workoutData.distance)} 
+                </Text>
+                <Text style={styles.mainStatLabel}>Calories</Text>
               </View>
-
-              <View style={styles.statRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statLabel}>Steps</Text>
-                  <Text style={styles.statValue}>~{Math.round(workoutData.distance * 1300)}</Text>
-                </View>
-                <View style={styles.statItem}>
-                  <Text style={styles.statLabel}>Weather</Text>
-                  <Text style={styles.statValue}>Not available</Text>
-                </View>
+              <View style={styles.mainStat}>
+                <Text style={styles.mainStatValue}>
+                  ~{Math.round(workoutData.distance * 1300)}
+                </Text>
+                <Text style={styles.mainStatLabel}>Steps</Text>
               </View>
             </View>
 
-            {/* Pace Graph - only render if not in error state */}
+            {/* Pace Graph - only render if not in error state
             {typeof LineChart !== 'undefined' && (
               <View style={styles.graphContainer}>
                 <Text style={[styles.graphTitle, typography.subtitle]}>Pace Over Time</Text>
@@ -587,8 +574,8 @@ const RecordScreen = () => {
                   data={{
                     labels: paceData.map(d => Math.floor(d.time / 60).toString()),
                     datasets: [{
-                      data: paceData.map(d => d.pace)
-                    }]
+                      data: paceData.map(d => d.pace),
+                    }],
                   }}
                   width={Dimensions.get('window').width - 40}
                   height={220}
@@ -599,29 +586,26 @@ const RecordScreen = () => {
                     decimalPlaces: 1,
                     color: (opacity = 1) => `rgba(107, 199, 107, ${opacity})`,
                     style: {
-                      borderRadius: 16
-                    }
+                      borderRadius: 16,
+                    },
                   }}
                   bezier
+                  // eslint-disable-next-line react-native/no-inline-styles
                   style={{
                     marginVertical: 8,
-                    borderRadius: 16
+                    borderRadius: 16,
                   }}
                 />
               </View>
-            )}
+            )} */}
 
-            {/* Only include graph if SVG is available */}
-            {Platform.OS === 'web' ? null : (
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={[styles.button, styles.saveButton]}
-                  onPress={handleCloseSummary}
-                >
-                  <Text style={styles.buttonText}>Done</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            {/* Save Button */}
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={() => console.log('Save workout - to be implemented')}
+            >
+              <Text style={styles.saveButtonText}>Save Workout</Text>
+            </TouchableOpacity>
           </ScrollView>
         </SafeAreaView>
       </Modal>
@@ -687,25 +671,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginBottom: 20,
-    marginTop: 10, // Added top margin
+    marginTop: 10,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
+    padding: 15,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
     marginHorizontal: 5,
-  },
-  statLabel: {
-    ...typography.caption,
-    color: '#666',
-    marginBottom: 5,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   statValue: {
-    ...typography.body,
-    fontWeight: '700',
-    color: '#6bc76b',
+    fontSize: 18,
+    color: '#2E2E2E',
+    marginBottom: 5,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: '#666',
+    letterSpacing: 0.5,
   },
   description: {
     ...typography.body,
@@ -743,26 +732,23 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   mainStatValue: {
-    fontSize: 32,
-    fontFamily: 'Inter-Bold',
+    fontSize: 20,
+    fontFamily: 'Roboto-Bold',
     color: '#2E2E2E',
     marginBottom: 5,
   },
   mainStatLabel: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontSize: 12,
+    fontFamily: 'Roboto-Medium',
     color: '#666',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  additionalStats: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  statRow: {
+  additionalStatsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginHorizontal: 20,
+    marginVertical: 20,
   },
   button: {
     backgroundColor: '#6bc76b',
@@ -774,6 +760,12 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#6bc76b',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 40,
   },
   buttonText: {
     fontSize: 16,
@@ -823,6 +815,11 @@ const styles = StyleSheet.create({
   closeButtonText: {
     fontSize: 24,
     color: '#333',
+  },
+  saveButtonText: {
+    fontSize: 18,
+    fontFamily: 'Roboto-Bold',
+    color: '#fff',
   },
 });
 
