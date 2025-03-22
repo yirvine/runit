@@ -20,7 +20,7 @@ RunIt provides a comprehensive running experience with the following features in
 
 | Profile Page | Friends | Challenges |
 |-------------|---------|-----------|
-| <img src="./assets/screenshots/profilepage.png" width="250"> | <img src="./assets/screenshots/friends.png" width="250"> | <img src="./assets/screenshots/challenges1.png" width="250"> |
+| <img src="./assets/screenshots/profilepage.png" width="250"> | <img src="./assets/screensshots/friends.png" width="250"> | <img src="./assets/screenshots/challenges1.png" width="250"> |
 
 | Record Page | Recording a Run | Completed Run |
 |------------|----------------|---------------|
